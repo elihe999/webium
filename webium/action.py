@@ -9,9 +9,11 @@ class Actions(object):
     def __init__(self):
         self.actions = ActionChains(get_driver())
 
-    def move_n_click(self, _target_element):
+    def move_n_click(self, _target_element, delay=0):
         try:
             self.actions.move_to_element(_target_element)
+            if delay > 0:
+                get_driver().implicitly_wait(delay)
             self.actions.click()
             self.actions.perform()
         except BaseException as e:

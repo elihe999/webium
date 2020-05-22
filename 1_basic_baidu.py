@@ -3,7 +3,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from webium.controls.link import Link
 from webium.driver import get_driver
 from webium import BasePage, Find, Finds, Actions
-
+from webium import settings
 
 class GooglePage(BasePage):
     url = 'http://www.baidu.com'
@@ -21,6 +21,7 @@ class ResultsPage(BasePage):
 
 
 if __name__ == '__main__':
+    settings.chrome_handless = True
     home_page = GooglePage()
     home_page.open()
     # home_page.text_field.send_keys('Page Object')
