@@ -1,0 +1,6 @@
+loginbox,id,login-box
+usernameinput,classname,gwt-TextBox
+passwordinput,classname,gwt-PasswordTextBox
+loginsubmit,classname,gwt-Button
+infopopout,xpath,//*[@class='left message']/p
+infopopoutclose,xpath,//div[@class="popupContent"]//span[@class="closebtn"]
