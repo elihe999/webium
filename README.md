@@ -10,9 +10,7 @@ It allows you to extend WebElement class to your custom controls like Link, Butt
 
 ## Installation
 
-The latest stable version is available on PyPI:
-
-    pip install webium
+Remove at this fork repo
 
 ## Usage
 
@@ -61,3 +59,6 @@ if __name__ == '__main__':
 ```
 
 More usage details are available here: http://wgnet.github.io/webium/
+
+
+### log

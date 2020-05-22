@@ -1,3 +1,0 @@
-loginbtn,xpath,'//*[@id="control-pad"]/div[2]/div[2]/button'
-loginusername,xpath,'//*[@id="control-pad"]/div[1]/div[2]/input'
-loginpassword,xpath,'//*[@id="control-pad"]/div[2]/div[2]/input'
