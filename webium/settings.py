@@ -18,6 +18,11 @@ service_ignore_ssl_errors = True
 
 default_search_type = By.ID
 
+waitnum = 7
+shortwaitnum = 15
+middlewaitnum = 35
+longwaitnum = 60
+
 try:
     from local_webium_settings import *  # noqa
 except ImportError:
