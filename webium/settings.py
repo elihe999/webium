@@ -5,6 +5,8 @@ driver_class = Chrome
 implicit_timeout = 30
 wait_timeout = 30
 
+chromedriverpath =  r"chromedriver.exe"
+
 default_search_type = By.ID
 
 try:

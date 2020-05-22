@@ -6,11 +6,16 @@ _driver_instance = None
 
 
 def get_driver():
-    chromedriver_path = r"chromedriver.exe"
+    chromedriver_path = webium.settings.chromedriverpath
     c_service = Service(chromedriver_path)
     c_service.command_line_args()
     c_service.start()
     chrome_options = Options()
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--ignore-certificate-errors')
+    chrome_options.add_argument('--disable-plugins')
     service_args = []
     service_args.append('--load-images=no')
     service_args.append('--disk-cache=yes')

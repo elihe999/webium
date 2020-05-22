@@ -25,7 +25,7 @@ if __name__ == '__main__':
     home_page = GooglePage()
     home_page.open()
     home_page.text_field.send_keys('Page Object')
-    home_page.button.click()
+    home_page.button.move_n_click()
     results_page = ResultsPage()
     print('Results summary: ' + results_page.stat.text)
     for item in results_page.results:
