@@ -24,11 +24,7 @@ if __name__ == '__main__':
     settings.chrome_handless = True
     home_page = GooglePage()
     home_page.open()
-    # home_page.text_field.send_keys('Page Object')
-    # home_page.button.click()
+    home_page.text_field.send_keys('Page Object')
+    home_page.button.click()
     Actions().move_n_click(home_page.button)
-    # results_page = ResultsPage()
-    # print('Results summary: ' + results_page.stat.text)
-    # for item in results_page.results:
-    #     print(item.link.text)
-    # get_driver().quit()
+    get_driver().quit()
