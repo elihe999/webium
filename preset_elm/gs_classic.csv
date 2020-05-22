@@ -1,0 +1,10 @@
+loginbox,id,login-box
+usernameinput,classname,gwt-TextBox
+passwordinput,classname,gwt-PasswordTextBox
+loginsubmit,classname,gwt-Button
+infopopout,xpath,//*[@class='left message']/p
+infopopoutclose,xpath,//div[@class="popupContent"]//span[@class="closebtn"]
+resetheadingbox,xpath,//div[@class="heading"]/div[@class="gwt-HTML"]
+resetpassword,classname,gwt-PasswordTextBox
+popupContent,classname,popupContent
+topBanner,id,topBanner

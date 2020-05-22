@@ -70,3 +70,15 @@ class BasePage(object):
 
     def implicitly_wait(self, *args):
         return self._driver.implicitly_wait(*args)
+
+    def get(self, url=""):
+        self.driver.get(url)
+    
+    def refresh(self):
+        self.driver.refresh()
+
+    def return_url(self):
+        return self.driver.current_url
+    
+    def clean_cache(self):
+        self.driver.delete_all_cookies()

@@ -84,7 +84,7 @@ class Finds(Find):
             raise WebiumException('Finds is applicable only for WebElements')
 
     def _search_element(self):
-        self.context.implicitly_wait(0)
+        # self.context.implicitly_wait(0)
         self._target_element = self.context.find_elements(self.by, self.value)
         self.context.implicitly_wait(webium.settings.implicit_timeout)
         for item in self._target_element:
