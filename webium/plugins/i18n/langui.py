@@ -4,10 +4,11 @@ import importlib
 class swtLang(object):
     model = None
     def __init__(self, langfile="ENUS"):
-        lib_folder = os.path.join("webium", "i18n")
+        lib_folder = os.path.join("i18n")
         file_name = os.path.join(lib_folder, "window_" + langfile + ".py")
-        model_path = "webium.i18n" + "." + "window_" + langfile
+        model_path = lib_folder + "." + "window_" + langfile
         class_name = "open"
+        print("Loading ... " + file_name)
         if os.path.exists(file_name):
             self.model = importlib.import_module(model_path)
         else:
@@ -20,4 +21,3 @@ class swtLang(object):
                 return getattr(self.model, class_name)
             except AttributeError:
                 return None
-

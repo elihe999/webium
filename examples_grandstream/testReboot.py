@@ -21,9 +21,11 @@ class AntDesignLoginPage(BasePage):
     button = wordListAntD.return_find_elem('loginsubmit')
     # language
     lang_select = wordListAntD.return_find_elem('loginboxlangselect')
+    language_ul = Finds(by=By.XPATH, '//*[@id="localeSelect"]//div/ul[@class="ant-dropdown-menu ant-dropdown-menu-light ant-dropdown-menu-root ant-dropdown-menu-vertical"]/li')
 
 class AntDesignMainPage(BasePage):
-    pass
+    reboot_link_btn = Find(by=By.XPATH, value='//*[@id="root"]//header//i[@class="icons icon-reboot"]')
+    reboot_ok_btn = Find(By.XPATH, value='/html/body/div[3]/div/div[2]/div/div[2]/div/div/div[2]/button[2]')
 
 class ClassicLoginPage(BasePage):
     login_box = wordListClassic.return_find_elem('loginbox')
@@ -43,85 +45,136 @@ class ClassicMainPage(BasePage):
     popoutwindow = wordListClassic.return_finds_elem('popupContent')
     resetpassword = wordListClassic.return_finds_elem('resetpassword')
 
-class AccountInfo():
+class task_flow():
     username = ''
     password = ''
+    initpasswd = ''
     loop = 1
     interval = 100
+    def __init__(self, style):
+        self.style = style
+        self.find_core_stop = False
+    
+    def login_info(self, user, passwd):
+        self.username = user
+        self.password = passwd
 
-def change_language(ui_style, page):
-    if ui_style == "classic":
-        page.lang_select_box.select_option('English')
-    elif ui_style == "antd":
-        Actions().move_n_click(page.lang_select)
-    else:
-        raise IndexError("Not matching UI")
+    def set_coredump_flag(self, flag):
+        if flag:
+            self.find_core_stop = True
+        else:
+            self.find_core_stop = False
 
-def find_coredump(elem_list):
-    for name in elem_list:
-        if name.get_attribute('innerHTML').find('core') != -1:
-            return True
-    return False
+    def set_loop(self, count, interval):
+        if count >= 1:
+            self.loop = count
+        if interval >= 30:
+            self.interval = interval
+        else:
+            print("You interval is too small")
 
-def reboot(aurl, username, password, style):
-    tester = AccountInfo()
-    url = aurl
-    tester.username = username
-    tester.password = password
-    home_page = ClassicLoginPage(url=url)
-    home_page.open()
-    # change language
-    change_language(style, home_page)
-    home_page.name_field.send_keys(tester.username)
-    home_page.password_field.send_keys(tester.password)
-    home_page.button.click()
-    #
-    temp_page = ClassicMainPage(url=url)
-    temp_page.open()
-    try:
-        wait.webiumWait().until(lambda browser: temp_page.popoutwindow)
-        if get_driver().find_element_by_xpath('//div[@class="heading"]/div[@class="gwt-HTML"]').get_attribute('textContent') == "Admin Password":
+###############################
+#      Custom   Action        #
+###############################
+    def change_language(self, page):
+        if self.style == "classic":
+            page.lang_select_box.select_option('English')
+        elif self.style == "antd":
+            Actions().move_n_click(page.lang_select)
+            for lang_li in page.language_ul:
+                print(lang_li)
+                if lang_li.get_attribute('textContent') == "English":
+                    Actions().move_n_click(lang_li)
+        else:
+            raise IndexError("Not matching UI")
+
+    def find_coredump(self, elem_list):
+        for name in elem_list:
+            if name.get_attribute('innerHTML').find('core') != -1:
+                return True
+        return False
+
+    def check_reset_window(self, page):
+        page.open()
+        if self.style == "classic":
             try:
-                i = 0
-                for passinputbox in get_driver().find_elements_by_xpath('//input[@class="gwt-PasswordTextBox"]'):
+                wait.webiumWait().until(lambda browser: temp_page.popoutwindow)
+                if get_driver().find_element_by_xpath('//div[@class="heading"]/div[@class="gwt-HTML"]').get_attribute('textContent') == "Admin Password":
                     try:
-                        if i == 0:
-                            Actions().move_n_click(passinputbox)
-                            passinputbox.send_keys(tester.username)
-                        else:
-                            Actions().move_n_click(passinputbox)
-                            passinputbox.send_keys(tester.password)
+                        i = 0
+                        for passinputbox in get_driver().find_elements_by_xpath('//input[@class="gwt-PasswordTextBox"]'):
+                            try:
+                                if i == 0:
+                                    Actions().move_n_click(passinputbox)
+                                    passinputbox.send_keys(self..username)
+                                else:
+                                    Actions().move_n_click(passinputbox)
+                                    passinputbox.send_keys(self.password)
+                            except BaseException as e:
+                                print("reset " + repr(e))
+                                pass
+                            finally:
+                                i = i + 1
                     except BaseException as e:
-                        print("reset " + repr(e))
-                        pass
-                    finally:
-                        i = i + 1
-            except BaseException as e:
-                print(repr(e))
-            try:
-                button_list = get_driver().find_elements_by_class_name("gwt-Button")
-                for btn in button_list:
-                    if btn.get_attribute("innerHTML") == "Save" and btn.is_displayed():
-                        Actions().move_n_click(btn)
-            except BaseException as e:
-                print("Click save password " + repr(e))
-    except TimeoutException:
-        pass
-    main_page = ClassicMainPage(url=url+"#page:status_system_info")
-    main_page.open()
-    time.sleep(5)
-    main_page.refresh
-    label_list = Finds(by=By.XPATH, value='//*[@class="data-list"]/tbody/tr/td/div/table/tbody/tr[@class="table-row"]/td[1]//div[@class="gwt-HTML last"]')
-    print(main_page.ver_label.get_attribute('textContent'))
-    time.sleep(1)
-    main_page.reboot_link_btn.click()
-    wait.webiumWait().until(lambda browser: main_page.reboot_ok_btn)
-    main_page.reboot_ok_btn.click()
-    get_driver().quit()
+                        print(repr(e))
+                    try:
+                        button_list = get_driver().find_elements_by_class_name("gwt-Button")
+                        for btn in button_list:
+                            if btn.get_attribute("innerHTML") == "Save" and btn.is_displayed():
+                                Actions().move_n_click(btn)
+                    except BaseException as e:
+                        print("Click save password " + repr(e))
+            except TimeoutException:
+                pass
+        elif self.style == "antd":
+
+    def my_waiting(self, count):
+        # if count > 4:
+            # self.debuglog("waiting ：{}".format(str(count)))
+        for i in range(count):
+            time.sleep(1)
+            # if count > 4:
+        #         self.status[2] = count - i
+        #     if self.status[0] == False:
+        #         self.status[2] = 0
+        #         break
+        # self.status[2] = 0
+
+    def reboot(self):
+        currentloop = 0
+        while currentloop < self.loop:
+            if self.style == "classic":
+                home_page = ClassicLoginPage(url=url)
+            elif self.style == "antd":
+                home_page = AntDesignLoginPage(url=url)
+            home_page.open()
+            # Change language
+            change_language(home_page)
+            home_page.name_field.send_keys(tester.username)
+            home_page.password_field.send_keys(tester.password)
+            home_page.button.click()
+            # Check password reset
+            temp_page = ClassicMainPage(url=self.url)
+            self.check_reset_window(temp_page)
+            # Check system status
+            main_page = ClassicMainPage(url=self.url+"#page:status_system_info")
+            main_page.open()
+            time.sleep(5)
+            main_page.refresh
+            label_list = Finds(by=By.XPATH, value='//*[@class="data-list"]/tbody/tr/td/div/table/tbody/tr[@class="table-row"]/td[1]//div[@class="gwt-HTML last"]')
+            print(main_page.ver_label.get_attribute('textContent'))
+            time.sleep(1)
+            main_page.reboot_link_btn.click()
+            wait.webiumWait().until(lambda browser: main_page.reboot_ok_btn)
+            main_page.reboot_ok_btn.click()
+            get_driver().quit()
+            # sleep
+            self.my_waiting(self.interval)
+
 
 if __name__ == "__main__":
-    url = 'http://192.168.92.57'
+    url = 'http://192.168.92.83'
     username = 'admin'
-    password = '123456'
-    style = "classic"
+    password = '1'
+    style = "antd"
     reboot(url, username, password, style)
