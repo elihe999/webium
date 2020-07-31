@@ -33,6 +33,26 @@ def find_coredump( elem_list ):
             return True
     return False
 
+def reboot():
+    url = 'http://192.168.92.30'
+    home_page = ClassicLoginPage(url=url)
+    home_page.open()
+    home_page.name_field.send_keys('admin')
+    home_page.password_field.send_keys('123456')
+    home_page.button.click()
+    #page:status_system_info
+    main_page = MainPage(url=url+"#page:status_system_info")
+    main_page.open()
+    time.sleep(5)
+    print(main_page.ver_label.get_attribute('textContent'))
+    a = find_coredump(main_page.label_list)
+    print(a)
+    time.sleep(1)
+    main_page.reboot_link_btn.click()
+    wait.webiumWait().until(lambda browser: main_page.reboot_ok_btn)
+    main_page.reboot_ok_btn.click()
+    get_driver().quit()
+
 if __name__ == "__main__":
     url = 'http://192.168.92.30'
     home_page = ClassicLoginPage(url=url)
@@ -70,7 +90,7 @@ if __name__ == "__main__":
                     if btn.get_attribute("innerHTML") == "Save" and btn.is_displayed():
                         Actions().move_n_click(btn)
             except BaseException as e:
-                print("Click save password" + repr(e))
+                print("Click save password " + repr(e))
     except TimeoutException:
         pass
     #
@@ -81,4 +101,7 @@ if __name__ == "__main__":
     label_list = Finds(by=By.XPATH, value='//*[@class="data-list"]/tbody/tr/td/div/table/tbody/tr[@class="table-row"]/td[1]//div[@class="gwt-HTML last"]')
     print(main_page.ver_label.get_attribute('textContent'))
     time.sleep(1)
+    main_page.reboot_link_btn.click()
+    wait.webiumWait().until(lambda browser: main_page.reboot_ok_btn)
+    main_page.reboot_ok_btn.click()
     get_driver().quit()
