@@ -1,5 +1,4 @@
 import win32gui, win32con
-import pyautogui as pg
 import platform
 from webium.i18n import swtLang
 
