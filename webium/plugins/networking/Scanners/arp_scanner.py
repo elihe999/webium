@@ -221,6 +221,74 @@ class ArpScan:
 
     # endregion
 
+    # 20200805
+    # region Get IP address by MAC address
+    def get_ip_address(self, target_mac_address: str = 'ffffffffffff',
+                        timeout: int = 5, retry: int = 5,
+                        exit_on_failure: bool = True,
+                        show_scan_percentage: bool = False) -> str:
+        """
+        Get IP address of MAC address on network interface
+        :param timeout: Timeout in seconds (default: 3)
+        :param retry: Retry number (default: 3)
+        :param exit_on_failure: Exit if MAC address of target IP address not found (default: True)
+        :param show_scan_percentage: Show ARP scan progress percentage (default: True)
+        :return: IP address: Target IPv4 address (example: 192.168.0.1)
+        """
+
+        # region Set result MAC address value
+        target_ip_address: str = '0.0.0.0'
+        # endregion
+
+        try:
+            # region Clear lists with scan results
+            self._results.clear()
+            self._unique_results.clear()
+            self._mac_addresses.clear()
+            # endregion
+
+            # region Set variables
+            self._quit = not show_scan_percentage
+            self._target['mac-address'] = target_mac_address
+            print(target_mac_address)
+            timeout = 5
+            self._timeout = int(timeout)
+            self._retry_number = int(retry)
+            # endregion
+
+            # region Run _sniffer
+            self._thread_manager.add_task(self._sniff)
+            # endregion
+
+            # region Run sender
+            self._send()
+            # endregion
+
+            # region Wait
+            sleep(self._timeout)
+            # endregion
+
+            # region Return
+            print(self._results)
+            if 'ipv4-address' in self._results[1].keys():
+                target_ip_address = self._results[0]['ipv4-address']
+            # endregion
+
+        except IndexError:
+            pass
+
+        except KeyboardInterrupt:
+            self._base.print_info('Exit')
+            exit(0)
+
+        if target_ip_address == '0.0.0.0':
+            if exit_on_failure:
+                self._base.print_error('Could not find IP address of MAC address: ', target_mac_address)
+                exit(1)
+
+        return target_ip_address
+    # endregion
+
     # region Analyze packet
     def _analyze_packet(self, packet: Dict[str, Dict[str, str]]) -> None:
         """
