@@ -42,14 +42,15 @@ def dhcp_loop(func):
             __mac_address = results[0]['mac-address']
         # end region
 
-    def __arp_scan(stop_flag):
+    def __arp_scan(stop_flag, ip) -> bool:
         arp_scan: ArpScan = ArpScan(network_interface=current_network_interface)
         global __mac_address
         if __mac_address != "":
-            print( arp_scan.get_ip_address(__mac_address) )
+            ip = arp_scan.get_ip_address(__mac_address)
+            return True
         else:
             base.print_error("Can not find Device MAC Address!!")
-
+            return False
 
     def __tick(max, flag):
         _init = 0
@@ -58,16 +59,23 @@ def dhcp_loop(func):
             _init = _init + 1
 
     def start(*args, **kwargs):
+        assert 'ip' in kwargs.keys()
+        assert 'passwd' in kwargs.keys()
+        assert 'loop' in kwargs.keys()
+        assert 'sleep' in kwargs.keys()
+        assert 'flag' in kwargs.keys()
+        assert 'ip' in kwargs.keys()
         interal = 0
         base: Base = Base(admin_only=True, available_platforms=['Linux', 'Darwin', 'Windows'])
         __get_mac(kwargs['ip'], kwargs['flag'])
+        current_ip = kwargs['ip']
         while(interal <= kwargs['loop'] and kwargs != True):
             if kwargs['flag']:
                 break
             base.print_info("Current Loop is: " + str(interal))
             interal = interal + 1
             # region main
-            __arp_scan(kwargs['flag'])
+            __arp_scan(kwargs['flag'], current_ip)
             func(*args, **kwargs)
             # end region
             # region Sleep

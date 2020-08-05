@@ -223,7 +223,7 @@ class ArpScan:
 
     # 20200805
     # region Get IP address by MAC address
-    def get_ip_address(self, target_mac_address: str = 'ffffffffffff',
+    def get_ip_address(self, target_mac_address: str = 'ff:ff:ff:ff:ff:ff',
                         timeout: int = 5, retry: int = 5,
                         exit_on_failure: bool = True,
                         show_scan_percentage: bool = False) -> str:
@@ -236,7 +236,7 @@ class ArpScan:
         :return: IP address: Target IPv4 address (example: 192.168.0.1)
         """
 
-        # region Set result MAC address value
+        # region Set result IP address value
         target_ip_address: str = '0.0.0.0'
         # endregion
 
@@ -250,8 +250,6 @@ class ArpScan:
             # region Set variables
             self._quit = not show_scan_percentage
             self._target['mac-address'] = target_mac_address
-            print(target_mac_address)
-            timeout = 5
             self._timeout = int(timeout)
             self._retry_number = int(retry)
             # endregion
@@ -269,9 +267,11 @@ class ArpScan:
             # endregion
 
             # region Return
-            print(self._results)
-            if 'ipv4-address' in self._results[1].keys():
-                target_ip_address = self._results[0]['ipv4-address']
+            if 'ip-address' in self._results[1].keys():
+                for target in self._results:
+                    if target['mac-address'] == target_mac_address:
+                        target_ip_address = target['ip-address']
+                        break
             # endregion
 
         except IndexError:
